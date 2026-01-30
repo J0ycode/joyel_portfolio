@@ -205,8 +205,9 @@ h4 {
 
 a {
     text-decoration: none;
+    text-decoration: none;
     color: inherit;
-    transition: all 0.3s ease;
+    transition: all 0.4s ease-out;
 }
 
 /* Glassmorphism Utilities */
@@ -230,13 +231,17 @@ a {
     border: 1px solid var(--glass-border);
     border-radius: 15px;
     padding: 2rem;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
+    /* Bouncy Pop */
 }
 
 .glass-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2);
+    transform: translateY(-10px) scale(1.05);
+    /* "Little big" effect */
+    box-shadow: 0 15px 40px rgba(212, 175, 55, 0.25);
     border-color: var(--primary-color);
+    z-index: 10;
+    /* Ensure it pops over adjacent elements */
 }
 
 /* Navigation */
@@ -270,8 +275,9 @@ a {
     height: 2px;
     bottom: -5px;
     left: 0;
+    left: 0;
     background-color: var(--primary-color);
-    transition: width 0.3s ease;
+    transition: width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .nav-links a:hover::after {
@@ -449,17 +455,20 @@ section {
     flex-direction: column;
     align-items: center;
     gap: 1rem;
+    transition: transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 1s ease !important;
+    /* Specific 1s pop for Arsenal */
 }
 
 .skill-card i {
     font-size: 2.5rem;
     color: var(--secondary-color);
-    transition: transform 0.3s ease;
+    transition: transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 1s ease;
+    /* Sync with 1s card pop */
 }
 
 .skill-card:hover i {
-    transform: scale(1.2);
-    color: var(--primary-color);
+    transform: scale(1.3);
+    color: var(--accent-gold);
 }
 
 /* Projects Section */
@@ -540,12 +549,14 @@ section {
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    /* Bouncy Pop */
 }
 
 .social-icon:hover {
     background: var(--primary-color);
-    transform: translateY(-3px);
+    transform: translateY(-3px) scale(1.1);
+    box-shadow: 0 0 15px var(--primary-color);
 }
 
 .contact-form {
@@ -564,7 +575,10 @@ section {
     color: #fff;
     font-family: var(--font-main);
     outline: none;
-    transition: border-color 0.3s ease;
+    color: #fff;
+    font-family: var(--font-main);
+    outline: none;
+    transition: border-color 0.4s ease-out;
 }
 
 .form-group input:focus,
