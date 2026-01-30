@@ -199,19 +199,66 @@ document.addEventListener('DOMContentLoaded', () => {
     // Scroll Progress Bar
     const progressBar = document.createElement('div');
     progressBar.classList.add('scroll-progress');
+    // Add the "Man" icon
     document.body.appendChild(progressBar);
+
+    let lastScrollTop = 0;
 
     // Parallax & Scroll Progress
     window.addEventListener('scroll', () => {
-        // Progress Bar
+        const scrolledPy = window.scrollY; // Current scroll position
+
+        // Progress Bar Width
         const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-        const scrolled = (window.scrollY / windowHeight) * 100;
+        const scrolled = (scrolledPy / windowHeight) * 100;
         progressBar.style.width = `${scrolled}%`;
 
+        // Scroll Direction Logic for the "Man"
+        // (Removed Man logic, keeping basic bar update)
+
+        // Flight Takeoff Animation
+        const flightIcon = document.querySelector('.flight-icon');
+        if (flightIcon) {
+            // Calculate flight path based on scroll
+            // As we scroll down (0 -> 500px), plane goes Bottom-Left -> Top-Right
+            const flightProgress = Math.min(scrolledPy / 600, 1); // Cap at 600px scroll
+
+            if (scrolledPy < 600) {
+                flightIcon.style.opacity = '1';
+                const x = flightProgress * 500; // Move right 500px
+                const y = flightProgress * -400; // Move up 400px
+                const scale = 1 + flightProgress * 2; // Plane gets closer/bigger
+                const rotate = -15 - (flightProgress * 30); // Tilt up from -15 to -45
+
+                flightIcon.style.transform = `translate(${x}px, ${y}px) scale(${scale}) rotate(${rotate}deg)`;
+            } else {
+                flightIcon.style.opacity = '0'; // Disappear once flown away
+            }
+        }
+        if (scrolledPy > lastScrollTop) {
+            // Scrolling Down (Pulling)
+            scrollMan.classList.remove('pushing');
+            scrollMan.classList.add('pulling');
+        } else {
+            // Scrolling Up (Pushing)
+            scrollMan.classList.add('pushing');
+            scrollMan.classList.remove('pulling');
+        }
+        lastScrollTop = scrolledPy <= 0 ? 0 : scrolledPy; // For Mobile or negative scrolling
+
         // Parallax Background Effect
-        const scrolledPy = window.scrollY;
         // Move background slower than scroll
         document.body.style.backgroundPositionY = `${scrolledPy * 0.5}px`;
+
+        // Menu Bar Scroll Effect (Moving Spotlight)
+        const glassNav = document.querySelector('.glass-nav');
+        if (glassNav) {
+            // Move highlight from 20% to 80% based on scroll
+            // Cycle every 1000px or so
+            const navProgress = (scrolledPy % 2000) / 2000;
+            const highlightPos = 20 + (navProgress * 60); // Keep between 20% and 80%
+            glassNav.style.setProperty('--highlight-pos', `${highlightPos}%`);
+        }
 
         // Move particles slightly differently for depth
         const canvas = document.querySelector('#particle-canvas');
@@ -222,15 +269,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Advanced Scroll Reveal (Slide Up)
     const observerOptions = {
-        threshold: 0.15,
-        rootMargin: "0px 0px -50px 0px" // Trigger slightly before element is fully visible
+        threshold: 0.1,
+        rootMargin: "0px 0px -50px 0px" // Trigger slightly before bottom
     };
 
     const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
+        entries.forEach((entry) => {
             if (entry.isIntersecting) {
                 entry.target.classList.add('active');
-                observer.unobserve(entry.target); // Only animate once
+                // observer.unobserve(entry.target); // Removed to allow re-triggering
+            } else {
+                // Remove class when out of view to reset animation
+                entry.target.classList.remove('active');
             }
         });
     }, observerOptions);
@@ -257,4 +307,69 @@ document.addEventListener('DOMContentLoaded', () => {
         el.style.transitionDelay = `${index * 150}ms`; // Slightly slower stagger for larger cards
         observer.observe(el);
     });
+
+    // Cinematic Preloader Logic
+    window.addEventListener('load', () => {
+        const preloader = document.getElementById('preloader');
+        // Slight delay to ensure the animation is seen
+        setTimeout(() => {
+            preloader.classList.add('fade-out');
+            // Enable scrolling after preloader leaves (optional polish)
+            document.body.style.overflow = 'auto';
+        }, 1500);
+    });
+
+    // Magnetic Button Effect
+    const magneticButtons = document.querySelectorAll('.btn, .social-icon');
+
+    magneticButtons.forEach(btn => {
+        btn.addEventListener('mousemove', (e) => {
+            const rect = btn.getBoundingClientRect();
+            const x = e.clientX - rect.left - rect.width / 2;
+            const y = e.clientY - rect.top - rect.height / 2;
+
+            // magnetic pull strength
+            btn.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px) scale(1.1)`;
+        });
+
+        btn.addEventListener('mouseleave', () => {
+            btn.style.transform = 'translate(0px, 0px) scale(1)';
+        });
+    });
+
+    // 3D Holographic Card Tilt Effect
+    const cards = document.querySelectorAll('.glass-card');
+
+    cards.forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+
+            const rotateX = ((y - centerY) / centerY) * -10; // Max 10deg rotation
+            const rotateY = ((x - centerX) / centerX) * 10;
+
+            // Apply 3D rotation, keeping the scale pop
+            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.05) translateY(-10px)`;
+        });
+
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = '';
+        });
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = '';
+        });
+    });
+
+    // Footer Text Wave Animation
+    const footerText = document.querySelector('.footer-content p');
+    if (footerText) {
+        footerText.innerHTML = footerText.textContent.split('').map((char, index) => {
+            if (char === ' ') return '<span>&nbsp;</span>';
+            return `<span style="animation-delay: ${index * 100}ms">${char}</span>`;
+        }).join('');
+    }
 });

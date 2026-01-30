@@ -14,6 +14,73 @@
     --font-main: 'Outfit', sans-serif;
 }
 
+/* Cinematic Preloader */
+#preloader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    z-index: 999999;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.8s ease-in-out, visibility 0.8s;
+}
+
+#preloader.fade-out {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.loader-logo {
+    font-size: 5rem;
+    font-weight: 800;
+    color: transparent;
+    -webkit-text-stroke: 2px var(--primary-color);
+    animation: pulseLogo 2s infinite alternate;
+}
+
+.loader-line {
+    width: 0;
+    height: 2px;
+    background: var(--primary-color);
+    margin-top: 20px;
+    animation: expandLine 2s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+}
+
+@keyframes pulseLogo {
+    0% {
+        opacity: 0.3;
+        transform: scale(0.9);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1.1);
+        text-shadow: 0 0 20px var(--primary-color);
+    }
+}
+
+@keyframes expandLine {
+    0% {
+        width: 0;
+        opacity: 0;
+    }
+
+    50% {
+        width: 100px;
+        opacity: 1;
+    }
+
+    100% {
+        width: 200px;
+        opacity: 0;
+    }
+}
+
 /* Scroll Progress Bar */
 .scroll-progress {
     position: fixed;
@@ -29,24 +96,21 @@
 }
 
 /* The 'Pulling' Spark */
+/* The 'Pulling' Spark (Restored) */
 .scroll-progress::after {
     content: '';
     position: absolute;
     top: 50%;
     right: 0;
-    /* Sits at the tip */
     transform: translate(50%, -50%);
-    /* Centers on the tip */
     width: 20px;
     height: 10px;
-    /* Varied dimensions for speed look */
     background: #fff;
     border-radius: 10px;
     box-shadow:
         0 0 10px var(--accent-gold),
         0 0 20px var(--primary-color),
         -10px 0 20px var(--secondary-color);
-    /* Trail */
     clip-path: polygon(0 0, 100% 50%, 0 100%);
     /* Arrow/Spark shape */
 }
@@ -211,8 +275,10 @@ a {
 }
 
 /* Glassmorphism Utilities */
+/* Glassmorphism Utilities */
 .glass-nav {
-    background: rgba(5, 5, 5, 0.7);
+    background: rgba(5, 5, 5, 0.85);
+    /* Slightly darker base */
     backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--glass-border);
     position: fixed;
@@ -223,6 +289,17 @@ a {
     justify-content: space-between;
     align-items: center;
     padding: 1rem 5%;
+    /* Premium Graphics with Scroll Variable */
+    --highlight-pos: 50%;
+    /* Default center */
+    background-image:
+        radial-gradient(circle at var(--highlight-pos) 0%, rgba(212, 175, 55, 0.25) 0%, transparent 70%),
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 100% 100%, 20px 20px, 20px 20px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+    transition: background-image 0s;
+    /* Instant update for scroll */
 }
 
 .glass-card {
@@ -361,6 +438,8 @@ a {
     color: #000;
     border: none;
     box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+    transition: all 0.2s ease-out;
+    /* Smooth return for magnetic effect */
 }
 
 .btn.primary:hover {
@@ -528,6 +607,113 @@ section {
     color: var(--secondary-color);
 }
 
+/* Skill Card Hover Description */
+.skill-card {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
+    overflow: hidden;
+    min-height: 160px;
+    position: relative;
+    text-align: center;
+}
+
+.skill-card i {
+    font-size: 2.5rem;
+    color: var(--secondary-color);
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
+    transition: transform 0.3s ease, color 0.3s ease, opacity 0.3s ease, text-shadow 0.3s ease;
+    margin-bottom: 5px;
+}
+
+/* Icon Container Logic */
+.icon-container {
+    position: relative;
+    width: 2.5rem;
+    height: 2.5rem;
+    margin: 0 auto 5px;
+    transition: transform 0.3s ease;
+}
+
+.icon-container i {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0;
+}
+
+.skill-logo {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: opacity 0.3s ease;
+}
+
+.skill-card h3 {
+    font-size: 1.1rem;
+    margin: 0;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.skill-desc {
+    font-size: 0.9rem;
+    color: #cbd5e1;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s ease;
+    position: absolute;
+    bottom: 2rem;
+    width: 100%;
+    left: 0;
+}
+
+/* Hover: Scale Logic */
+.skill-card:hover .icon-container {
+    transform: translateY(-25px) scale(1.1);
+}
+
+.skill-card:hover .icon-container i {
+    opacity: 0;
+}
+
+.skill-card:hover .skill-logo {
+    opacity: 1;
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));
+}
+
+/* Hover: Standard Icon (Fallback) - Only direct children */
+.skill-card:hover>i {
+    transform: translateY(-25px) scale(1.05);
+    color: var(--skill-color, var(--primary-color));
+
+    text-shadow:
+        0 0 10px var(--skill-color, var(--primary-color)),
+        0 0 20px var(--skill-color, var(--primary-color)),
+        0 0 40px var(--skill-color, var(--primary-color));
+
+    filter: brightness(1.1) saturate(1.5);
+}
+
+.skill-card:hover h3 {
+    transform: translateY(-25px);
+    /* Removed text color change based on 'icons only' request */
+    color: #fff;
+}
+
+.skill-card:hover .skill-desc {
+    opacity: 1;
+    transform: translateY(0);
+}
+
 /* Contact Section */
 .contact-container {
     display: grid;
@@ -591,20 +777,11 @@ footer {
     position: relative;
     text-align: center;
     padding: 0;
-    /* Removing padding to let waves sit flush */
     color: #64748b;
     background: transparent;
-    /* Background handled by waves */
     margin-top: 5rem;
-}
-
-footer p {
-    background: rgba(5, 5, 5, 0.9);
-    /* Match final wave color */
-    margin: 0;
-    padding: 2rem;
-    position: relative;
-    z-index: 10;
+    overflow: hidden;
+    /* Ensure waves don't spill */
 }
 
 /* Waves Animation */
@@ -612,13 +789,100 @@ footer p {
     position: relative;
     width: 100%;
     height: 60px;
-    /* Reduced height for smoothness */
-    margin-bottom: -5px;
+    /* Slight increase for better visibility but still low */
     min-height: 40px;
-    max-height: 80px;
+    margin-bottom: -5px;
 }
 
 .waves-svg {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* Horizontal Wave Animation */
+.parallax>use {
+    animation: move-forever 25s cubic-bezier(.55, .5, .45, .5) infinite;
+}
+
+.parallax>use:nth-child(1) {
+    animation-delay: -2s;
+    animation-duration: 7s;
+}
+
+.parallax>use:nth-child(2) {
+    animation-delay: -3s;
+    animation-duration: 10s;
+}
+
+.parallax>use:nth-child(3) {
+    animation-delay: -4s;
+    animation-duration: 13s;
+}
+
+.parallax>use:nth-child(4) {
+    animation-delay: -5s;
+    animation-duration: 20s;
+}
+
+@keyframes move-forever {
+    0% {
+        transform: translate3d(-90px, 0, 0);
+    }
+
+    100% {
+        transform: translate3d(85px, 0, 0);
+    }
+}
+
+.footer-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 10px;
+    /* Adjusted to ride the 60px wave */
+    z-index: 20;
+    pointer-events: none;
+}
+
+footer p {
+    background: transparent;
+    /* No background now */
+    margin: 0;
+    padding: 0;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+    animation: floatText 4s ease-in-out infinite;
+    /* Float with the waves */
+}
+
+@keyframes floatText {
+
+    0%,
+    100% {
+        transform: translateY(0);
+        opacity: 0.7;
+    }
+
+    50% {
+        transform: translateY(-5px);
+        opacity: 1;
+    }
+}
+
+.waves-svg {
+    position: absolute;
+    bottom: 0;
+    left: 0;
     width: 100%;
     height: 100%;
 }
